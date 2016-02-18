@@ -1,0 +1,36 @@
+extends layout
+
+block header
+  meta(name="description", content="Adam's git repos.")
+  title Adam Heins
+
+block styles
+  link(rel="stylesheet", href="#{process.env.STATIC_HOST}/css/prism.css")
+
+block scripts
+  script(src="#{process.env.STATIC_HOST}/js/prism.js")
+  script.
+    var li = document.getElementsByTagName('pre');
+    for (var i = 0; i < li.length; ++i) {
+      li[i].addEventListener('click', function(e) {
+        var codes = this.getElementsByTagName('code');
+        if (codes[0].style.display === 'none') {
+          codes[0].style.display = 'block';
+          codes[1].style.display = 'none';
+        } else {
+          codes[0].style.display = 'none';
+          codes[1].style.display = 'block';
+        }
+      });
+    }
+
+block content
+  article
+    each file in files
+      section
+        pre
+          code(class="language-none").
+            #{file.name}
+          code(class="language-none", style="display: none;").
+            git clone #{file.url}
+

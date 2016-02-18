@@ -1,0 +1,20 @@
+{
+  "name": "git.adamheins.com",
+  "version": "1.0.0",
+  "description": "A very simple git hosting utility.",
+  "author": "Adam Heins <mail@adamheins.com>",
+  "main": "server.js",
+  "engines": {
+    "node": "0.12.0"
+  },
+  "scripts": {
+    "start": "./sh/start.sh",
+    "stop": "./sh/stop.sh"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "express": "~4.13.4",
+    "glob": "~7.0.0",
+    "jade": "~1.11.0"
+  }
+}
