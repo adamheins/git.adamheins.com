@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A very simple git hosting utility.",
   "author": "Adam Heins <mail@adamheins.com>",
-  "main": "server.js",
+  "license": "MIT",
   "engines": {
     "node": "0.12.0"
   },
@@ -15,6 +15,8 @@
   "dependencies": {
     "express": "~4.13.4",
     "glob": "~7.0.0",
-    "jade": "~1.11.0"
+    "jade": "~1.11.0",
+    "marked": "^0.3.5",
+    "nodegit": "^0.11.2"
   }
 }

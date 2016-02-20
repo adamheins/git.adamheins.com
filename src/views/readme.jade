@@ -1,0 +1,18 @@
+extends layout
+
+block header
+  meta(name="description", content="Git repository for #{repo.name}.")
+  title= repo.name
+
+block styles
+  link(rel="stylesheet", href="#{process.env.STATIC_HOST}/css/prism.css")
+
+block scripts
+  script(src="#{process.env.STATIC_HOST}/js/prism.js")
+
+block content
+  article
+    pre(class="language-none")
+      code git clone #{repo.url}
+    section
+      div!= repo.readme
