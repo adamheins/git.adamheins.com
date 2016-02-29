@@ -1,15 +1,18 @@
 'use strict';
 
 var express = require('express');
-var path = require('path');
-var glob = require('glob');
+var favicon = require('serve-favicon');
 var git = require('nodegit');
+var glob = require('glob');
 var marked = require('marked');
+var path = require('path');
 
 var app = express();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+
+app.use(favicon(path.join(__dirname, 'favicon.ico')));
 
 app.get('/', function(req, res) {
   glob(path.join(process.env.GIT_DIR, '*.git'), function(err, files) {
@@ -25,12 +28,11 @@ app.get('/', function(req, res) {
   });
 });
 
-// TODO redirect when .git extension added
 app.get('/:name', function(req, res) {
-  var name = req.params.name;
+  var name = req.params.name + '.git';
   var url = [process.env.HOST, name].join('/');
 
-  git.Repository.open(path.join(process.env.GIT_DIR, name + '.git'))
+  git.Repository.open(path.join(process.env.GIT_DIR, name))
     .then(function(repo) {
       return repo.getHeadCommit();
     }).then(function(commit) {

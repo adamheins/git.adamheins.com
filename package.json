@@ -11,12 +11,12 @@
     "start": "./sh/start.sh",
     "stop": "./sh/stop.sh"
   },
-  "license": "MIT",
   "dependencies": {
     "express": "~4.13.4",
     "glob": "~7.0.0",
     "jade": "~1.11.0",
     "marked": "^0.3.5",
-    "nodegit": "^0.11.2"
+    "nodegit": "^0.11.2",
+    "serve-favicon": "^2.3.0"
   }
 }
