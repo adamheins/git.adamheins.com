@@ -6,8 +6,15 @@ block header
 
 block content
   article
-    ul(class="bare")
-      each repo in repos
-        li
-          a(href="/#{repo.name}") #{repo.name}
+    section
+      h1 Git Hosting
+      p This is where I host my public git repositories.
+    section
+      h2 Repositories
+      .article-flavour.
+        Click a repository to view its README and a link to clone it.
+      ul.bare
+        each repo in repos
+          li
+            a(href="/#{repo.name}") #{repo.name}
 
