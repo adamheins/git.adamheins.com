@@ -42,7 +42,17 @@ app.get('/:name', function(req, res) {
     }).then(function(blob) {
       var readme = blob.toString();
       try {
-        readme = marked(readme);
+        var renderer = new marked.Renderer();
+        renderer.codespan = function(code) {
+          return '<code class="language-none">' + code + '</code>';
+        };
+        renderer.code = function(code, lang) {
+          if (!lang) {
+            lang = 'none';
+          }
+          return '<pre><code class="language-' + lang + '">' + code + '</code></pre>';
+        };
+        readme = marked(readme, { renderer: renderer });
       } catch(err) {
         console.log('README parsing error.');
         console.log(err);
