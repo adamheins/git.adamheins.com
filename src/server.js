@@ -29,10 +29,11 @@ app.get('/', function(req, res) {
 });
 
 app.get('/:name', function(req, res) {
-  var name = req.params.name + '.git';
-  var url = [process.env.HOST, name].join('/');
+  var name = req.params.name;
+  var fullName = name + '.git';
+  var url = [process.env.HOST, fullName].join('/');
 
-  git.Repository.open(path.join(process.env.GIT_DIR, name))
+  git.Repository.open(path.join(process.env.GIT_DIR, fullName))
     .then(function(repo) {
       return repo.getHeadCommit();
     }).then(function(commit) {
