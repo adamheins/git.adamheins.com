@@ -28,6 +28,31 @@ app.get('/', function(req, res) {
   });
 });
 
+// Retrieve base64-encoded raw content.
+app.get('/:name/raw/:branch/*', function(req, res) {
+  var name = req.params.name;
+  var branch = req.params.branch;
+  var repo = path.join(process.env.GIT_DIR, name + '.git');
+  var fpath = req.url.split('/').slice(4).join(path.sep);
+  var ftype = req.url.split('.').slice(-1)[0];
+
+  git.Repository.open(repo).then(function(repo) {
+    return repo.getBranchCommit(branch);
+  }).then(function(commit) {
+    return commit.getEntry(fpath);
+  }).then(function(entry) {
+    return entry.getBlob();
+  }).then(function(blob) {
+    res.setHeader('Content-Type', 'application/json');
+    res.json({
+      'type': ftype,
+      'content': blob.content().toString('base64')
+    });
+  }, function(error) {
+    console.log(error);
+  }).done();
+});
+
 app.get('/:name', function(req, res) {
   var name = req.params.name;
   var fullName = name + '.git';
