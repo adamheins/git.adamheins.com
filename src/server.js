@@ -52,7 +52,7 @@ app.get('/', function(req, res) {
   });
 });
 
-// Retrieve base64-encoded raw content.
+// Get raw content.
 app.get('/:name/raw/:branch/*', function(req, res) {
   var name = req.params.name;
   var branch = req.params.branch;
@@ -73,6 +73,40 @@ app.get('/:name/raw/:branch/*', function(req, res) {
     console.log(error);
     res.status(404).end();
   }).done();
+});
+
+app.get('/:name/files/:branch/*', function(req, res) {
+  var name = req.params.name;
+  var branch = req.params.branch;
+  var repo = path.join(process.env.GIT_DIR, name + '.git');
+  var fpath = req.url.split('/').slice(4).join(path.sep);
+  var fname = req.url.split('/').slice(-1)[0];
+  var ftype = req.url.split('.').slice(-1)[0];
+
+  git.Repository.open(repo).then(function(repo) {
+    return repo.getBranchCommit(branch);
+  }).then(function(commit) {
+    return commit.getEntry(fpath);
+  }).then(function(entry) {
+    return entry.getBlob();
+  }).then(function(blob) {
+    // If the file is binary, just send the raw stuff. Otherwise, pretty it up
+    // a bit.
+    if (blob.isBinary()) {
+      res.contentType(ftype);
+      res.send(blob.content());
+    } else {
+      res.render('file', {
+        name: fname,
+        type: ftype,
+        content: blob.toString()
+      });
+    }
+  }, function(error) {
+    console.log(error);
+    res.status(404).end();
+  }).done();
+
 });
 
 app.get('/:name', function(req, res) {
