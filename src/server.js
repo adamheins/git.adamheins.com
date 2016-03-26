@@ -14,6 +14,30 @@ app.set('view engine', 'jade');
 
 app.use(favicon(path.join(__dirname, 'favicon.ico')));
 
+function getRenderer(repoName) {
+  var renderer = new marked.Renderer();
+
+  renderer.codespan = function(code) {
+    return '<code class="language-none">' + code + '</code>';
+  };
+  renderer.code = function(code, lang) {
+    if (!lang) {
+      lang = 'none';
+    }
+    return '<pre><code class="language-' + lang + '">' + code + '</code></pre>';
+  };
+  renderer.image = function(href, title, text) {
+    if (href.startsWith('http')) {
+      return '<img src="' + href + '" alt="' + text + '">';
+    } else {
+      return '<img src="' + repoName + '/raw/master/' + href + '" alt="' + text
+        + '">';
+    }
+  };
+
+  return renderer;
+}
+
 app.get('/', function(req, res) {
   glob(path.join(process.env.GIT_DIR, '*.git'), function(err, files) {
     res.render('index', {
@@ -43,13 +67,11 @@ app.get('/:name/raw/:branch/*', function(req, res) {
   }).then(function(entry) {
     return entry.getBlob();
   }).then(function(blob) {
-    res.setHeader('Content-Type', 'application/json');
-    res.json({
-      'type': ftype,
-      'content': blob.content().toString('base64')
-    });
+    res.contentType(ftype);
+    res.send(blob.content());
   }, function(error) {
     console.log(error);
+    res.status(404).end();
   }).done();
 });
 
@@ -68,17 +90,7 @@ app.get('/:name', function(req, res) {
     }).then(function(blob) {
       var readme = blob.toString();
       try {
-        var renderer = new marked.Renderer();
-        renderer.codespan = function(code) {
-          return '<code class="language-none">' + code + '</code>';
-        };
-        renderer.code = function(code, lang) {
-          if (!lang) {
-            lang = 'none';
-          }
-          return '<pre><code class="language-' + lang + '">' + code + '</code></pre>';
-        };
-        readme = marked(readme, { renderer: renderer });
+        readme = marked(readme, { renderer: getRenderer(name) });
       } catch(err) {
         console.log('README parsing error.');
         console.log(err);
