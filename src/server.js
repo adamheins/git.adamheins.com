@@ -30,8 +30,8 @@ function getRenderer(repoName) {
     if (href.startsWith('http')) {
       return '<img src="' + href + '" alt="' + text + '">';
     } else {
-      return '<img src="' + repoName + '/raw/master/' + href + '" alt="' + text
-        + '">';
+      return '<img src="' + process.env.HOST + '/' + repoName + '/raw/master/'
+        + href + '" alt="' + text + '">';
     }
   };
 
@@ -95,6 +95,11 @@ app.get('/:name/files/:branch/*', function(req, res) {
     if (blob.isBinary()) {
       res.contentType(ftype);
       res.send(blob.content());
+    } else if (ftype === 'md' || ftype === 'markdown') {
+      res.render('markdown', {
+        name: fname,
+        content: marked(blob.toString(), { renderer: getRenderer(name) })
+      });
     } else {
       res.render('file', {
         name: fname,
