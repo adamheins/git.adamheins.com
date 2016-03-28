@@ -1,0 +1,10 @@
+extends layout
+
+block header
+  meta(name="description", content="An error has occurred on this page.")
+  title= status + ' Error'
+
+block content
+  h1= status
+  h2= message
+  p!= description

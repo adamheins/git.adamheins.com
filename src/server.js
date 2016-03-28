@@ -6,6 +6,9 @@ var git = require('nodegit');
 var glob = require('glob');
 var marked = require('marked');
 var path = require('path');
+var fs = require('fs');
+
+var error = require('./lib/error');
 
 var app = express();
 
@@ -53,7 +56,7 @@ app.get('/', function(req, res) {
 });
 
 // Get raw content.
-app.get('/:name/raw/:branch/*', function(req, res) {
+app.get('/:name/raw/:branch/*', function(req, res, next) {
   var name = req.params.name;
   var branch = req.params.branch;
   var repo = path.join(process.env.GIT_DIR, name + '.git');
@@ -71,11 +74,11 @@ app.get('/:name/raw/:branch/*', function(req, res) {
     res.send(blob.content());
   }, function(error) {
     console.log(error);
-    res.status(404).end();
+    next();
   }).done();
 });
 
-app.get('/:name/files/:branch/*', function(req, res) {
+app.get('/:name/files/:branch/*', function(req, res, next) {
   var name = req.params.name;
   var branch = req.params.branch;
   var repo = path.join(process.env.GIT_DIR, name + '.git');
@@ -109,15 +112,22 @@ app.get('/:name/files/:branch/*', function(req, res) {
     }
   }, function(error) {
     console.log(error);
-    res.status(404).end();
+    next();
   }).done();
 
 });
 
-app.get('/:name', function(req, res) {
+app.get('/:name', function(req, res, next) {
   var name = req.params.name;
   var fullName = name + '.git';
   var url = [process.env.HOST, fullName].join('/');
+
+  // Check that the repo actually exists.
+  var repos = fs.readdirSync(process.env.GIT_DIR);
+  if (repos.indexOf(fullName) === -1) {
+    next();
+    return;
+  }
 
   git.Repository.open(path.join(process.env.GIT_DIR, fullName))
     .then(function(repo) {
@@ -153,5 +163,7 @@ app.get('/:name', function(req, res) {
       });
     }).done();
 });
+
+error.handle(app);
 
 app.listen(process.env.PORT);
