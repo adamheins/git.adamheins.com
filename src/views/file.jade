@@ -11,6 +11,13 @@ block scripts
   script(src="#{process.env.STATIC_HOST}/js/prism.js")
 
 block content
+  pre(class="language-none")
+    a(href="#{process.env.HOST}/#{repoName}")= repoName
+    span(style="margin-left: 0.4rem; margin-right: 0.4rem") /
+    each p in parentMap
+      a(href=p.url)= p.dir
+      span(style="margin-left: 0.4rem; margin-right: 0.4rem") /
+    span= name
   article
     pre(class="language-#{type}")
       code #{content}

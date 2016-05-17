@@ -99,7 +99,7 @@ app.get('/:name/files/:branch/*', (req, res, next) => {
             var name = entry.path().split('/').slice(-1)[0];
             return {
               'name': name,
-              'url': path.join(req.url, name)
+              'url': [req.url, name].join('/')
             };
           })
         });
@@ -117,7 +117,18 @@ app.get('/:name/files/:branch/*', (req, res, next) => {
             content: marked(blob.toString(), { renderer: getRenderer(repoName) })
           });
         } else {
+          var p = fpath.split('/').slice(0, -1);
+          var parentMap = p.reverse().map((dir, i) => {
+            return {
+              'dir': dir,
+              'url': [process.env.HOST, repoName, 'files', branch,
+                      p.slice(0, p.length - i).join('/')].join('/')
+            };
+          });
+          console.log(parentMap);
           res.render('file', {
+            repoName: repoName,
+            parentMap: parentMap,
             name: fname,
             type: ftype,
             content: blob.toString()
