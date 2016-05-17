@@ -78,43 +78,57 @@ app.get('/:name/raw/:branch/*', function(req, res, next) {
   }).done();
 });
 
-app.get('/:name/files/:branch/*', function(req, res, next) {
-  var name = req.params.name;
+app.get('/:name/files/:branch/*', (req, res, next) => {
+  var repoName = req.params.name;
   var branch = req.params.branch;
-  var repo = path.join(process.env.GIT_DIR, name + '.git');
+  var repo = path.join(process.env.GIT_DIR, repoName + '.git');
   var fpath = req.url.split('/').slice(4).join(path.sep);
   var fname = req.url.split('/').slice(-1)[0];
   var ftype = req.url.split('.').slice(-1)[0];
 
-  git.Repository.open(repo).then(function(repo) {
+  git.Repository.open(repo).then((repo) => {
     return repo.getBranchCommit(branch);
-  }).then(function(commit) {
+  }).then((commit) => {
     return commit.getEntry(fpath);
-  }).then(function(entry) {
-    return entry.getBlob();
-  }).then(function(blob) {
-    // If the file is binary, just send the raw stuff. Otherwise, pretty it up
-    // a bit.
-    if (blob.isBinary()) {
-      res.contentType(ftype);
-      res.send(blob.content());
-    } else if (ftype === 'md' || ftype === 'markdown') {
-      res.render('markdown', {
-        name: fname,
-        content: marked(blob.toString(), { renderer: getRenderer(name) })
-      });
+  }).then((entry) => {
+    if (entry.isTree()) {
+      return entry.getTree().then((tree) => {
+        res.render('tree', {
+          name: fname,
+          entries: tree.entries().map((entry) => {
+            var name = entry.path().split('/').slice(-1)[0];
+            return {
+              'name': name,
+              'url': path.join(req.url, name)
+            };
+          })
+        });
+      }).done();
     } else {
-      res.render('file', {
-        name: fname,
-        type: ftype,
-        content: blob.toString()
-      });
+      return entry.getBlob().then((blob) => {
+        // If the file is binary, just send the raw stuff. Otherwise, pretty it
+        // up a bit.
+        if (blob.isBinary()) {
+          res.contentType(ftype);
+          res.send(blob.content());
+        } else if (ftype === 'md' || ftype === 'markdown') {
+          res.render('markdown', {
+            name: fname,
+            content: marked(blob.toString(), { renderer: getRenderer(repoName) })
+          });
+        } else {
+          res.render('file', {
+            name: fname,
+            type: ftype,
+            content: blob.toString()
+          });
+        }
+      }).done();
     }
-  }, function(error) {
+  }, (error) => {
     console.log(error);
     next();
   }).done();
-
 });
 
 app.get('/:name', function(req, res, next) {
