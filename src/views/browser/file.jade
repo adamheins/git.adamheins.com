@@ -1,0 +1,20 @@
+extends ../layout
+
+include ../mixins/sources
+include ../mixins/git
+
+block header
+  meta(name="description", content="#{name}")
+  title= name
+
+block styles
+  +prismcss
+
+block scripts
+  +prismjs
+
+block content
+  +gitHeader
+  article
+    pre(class="language-#{type}")
+      code #{content}

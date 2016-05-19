@@ -1,16 +1,20 @@
-extends layout
+extends ../layout
+
+include ../mixins/sources
+include ../mixins/git
 
 block header
   meta(name="description", content="#{name}")
   title= name
 
 block styles
-  link(rel="stylesheet", href="#{process.env.STATIC_HOST}/css/prism.css")
+  +prismcss
 
 block scripts
-  script(src="#{process.env.STATIC_HOST}/js/prism.js")
+  +prismjs
 
 block content
+  +gitHeader
   article
     section
       div!= content

@@ -14,5 +14,11 @@ block content
   article
     pre(class="language-none")
       code git clone #{repo.url}
+    pre(class="language-none")
+      code
+        ul.bare
+          each entry in entries
+            li
+              a(href=entry.url)= entry.name
     section
       div!= repo.readme
