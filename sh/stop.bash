@@ -1,4 +1,7 @@
-#!/bin/sh
+#!/bin/bash
+
+# Change to parent of this script's directory.
+cd "$(dirname "${BASH_SOURCE[0]}")"/..
 
 PID_FILE=/var/run/git.adamheins.com.pid
 
