@@ -7,13 +7,9 @@ block header
 block content
   article
     section
-      h1 Git Hosting
-      p This is where I host my public git repositories.
-    section
-      h2 Repositories
-      p Click a repository to view its README and a link to clone it.
-      ul.bare
-        each repo in repos
-          li
-            a(href="/#{repo.name}") #{repo.name}
-
+      h1 Repositories
+    each repo in repos
+      section
+        h2
+          a(href="/#{repo.name}") #{repo.name}
+        p.description= repo.description
