@@ -18,8 +18,12 @@ router.get('/', (req, res, next) => {
   let commit = git.Repository.open(req.repoPath)
     .then(repo => {
       return repo.getHeadCommit();
+    }, err => {
+      // Repo not found, throw a 404 error.
+      let error = new Error('Not found.');
+      error.status = 404;
+      throw error;
     });
-
 
   commit.then(commit => {
       return commit.getEntry('README.md');
@@ -70,17 +74,22 @@ router.get('/', (req, res, next) => {
       }).done();
 
     }, err => {
-      // Repo has no README
-      console.log('No README.');
-      console.log(error);
+      // Assume that errors that aren't 404's indicate that the README is not
+      // present, but we can otherwise go ahead.
+      if (err.status !== 404) {
+        console.log('No README.');
+        console.log(err);
 
-      res.render('repo', {
-        repo: {
-          name: req.repoName,
-          url: req.repoCloneUrl,
-          readme: 'No README.'
-        }
-      });
+        res.render('repo', {
+          repo: {
+            name: req.repoName,
+            url: req.repoCloneUrl,
+            readme: 'No README.'
+          }
+        });
+      } else {
+        next(err);
+      }
 
     }).done();
 });
