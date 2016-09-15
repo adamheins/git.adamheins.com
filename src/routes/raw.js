@@ -4,6 +4,7 @@ let express = require('express');
 let router = express.Router({mergeParams: true});
 
 let git = require('nodegit');
+let log = require('npmlog');
 let path = require('path');
 
 let util = require('../lib/util');
@@ -25,7 +26,7 @@ router.get('/:reference/*', (req, res, next) => {
     res.contentType(fileType);
     res.send(blob.content());
   }, err => {
-    console.log(err);
+    log.error(err);
     next(err);
   }).done();
 });

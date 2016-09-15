@@ -4,6 +4,7 @@ let express = require('express');
 let router = express.Router({mergeParams: true});
 
 let git = require('nodegit');
+let log = require('npmlog');
 let marked = require('marked');
 let path = require('path');
 
@@ -67,7 +68,7 @@ router.get('/:reference/*', (req, res, next) => {
     }
 
   }, err => {
-    console.log(err);
+    log.error(err);
     next(err);
   }).done();
 });

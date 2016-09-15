@@ -1,17 +1,25 @@
 'use strict';
 
-var express = require('express');
-var favicon = require('serve-favicon');
-var path = require('path');
-var mongoose = require('mongoose');
+let express = require('express');
+let favicon = require('serve-favicon');
+let fs = require('fs');
+let log = require('npmlog');
+let mongoose = require('mongoose');
+let path = require('path');
 
 let error = require('./lib/error');
 let router = require('./lib/router');
 
 
+let app = express();
+
+// Connect to the database.
 mongoose.connect(process.env.MONGO_URI);
 
-let app = express();
+// Logging.
+log.level = process.env.LOG_LEVEL;
+log.stream = fs.createWriteStream(process.env.LOG_FILE);
+log.maxRecordSize = 1000;
 
 // View engine.
 app.set('views', path.join(__dirname, 'views'));

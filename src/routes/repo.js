@@ -4,6 +4,7 @@ let express = require('express');
 let router = express.Router({mergeParams: true});
 
 let git = require('nodegit');
+let log = require('npmlog');
 let marked = require('marked');
 let moment = require('moment');
 let path = require('path');
@@ -50,8 +51,8 @@ router.get('/', (req, res, next) => {
             renderer: renderer.getRenderer(req.repoName)
           });
         } catch(err) {
-          console.log('README parsing error.');
-          console.log(err);
+          log.info('README parsing error.');
+          log.error(err);
         }
 
         // Generate links to all contents of the repository.
@@ -77,8 +78,8 @@ router.get('/', (req, res, next) => {
       // Assume that errors that aren't 404's indicate that the README is not
       // present, but we can otherwise go ahead.
       if (err.status !== 404) {
-        console.log('No README.');
-        console.log(err);
+        log.info('No README.');
+        log.error(err);
 
         res.render('repo', {
           repo: {

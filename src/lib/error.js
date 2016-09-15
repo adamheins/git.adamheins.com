@@ -1,11 +1,12 @@
 'use strict';
 
+let log = require('npmlog');
+
 // Handle http errors.
 exports.handle = function(app) {
 
   // Catch 404 error and forward it to the error handler.
   app.use(function(req, res, next) {
-    console.log('Catching 404 error');
     let err = new Error('Not Found');
     err.status = 404;
     next(err);
@@ -14,7 +15,8 @@ exports.handle = function(app) {
   // Error handler. Provides a custom page for 404 errors.
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    console.log('Called error handler.');
+
+    log.error(err);
 
     if (err.status === 404) {
       res.render('error', {
