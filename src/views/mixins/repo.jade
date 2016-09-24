@@ -1,0 +1,24 @@
+mixin title
+  h1 #[a(href="#{process.env.HOST}") REPOSITORIES] / #[a(href="#{repo.webUrl}") #{repo.nameUpper}]
+
+mixin clone
+  pre(class="language-none")
+    code git clone #{repo.cloneUrl}
+
+mixin path
+  pre(class="language-none")
+    code
+      div(style="float: left")
+        a(href="#{repo.webUrl}")= repo.name
+        span(style="margin-left: 0.4rem; margin-right: 0.4rem") /
+        each p in file.parentMap
+          a(href=p.url)= p.dir
+          span(style="margin-left: 0.4rem; margin-right: 0.4rem") /
+        span= file.name
+      if file.rawUrl
+        span(style="float: right;") (#[a(href=file.rawUrl) raw])
+
+mixin repoHeader
+  +title
+  +clone
+  +path

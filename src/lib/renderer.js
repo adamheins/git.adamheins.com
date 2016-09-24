@@ -35,6 +35,10 @@ exports.getRenderer = function(repoName) {
     }
   };
 
+  renderer.heading = (text, level) => {
+    return '<h' + level + '>' + text.toUpperCase() + '</h' + level + '>';
+  };
+
   return renderer;
 }
 

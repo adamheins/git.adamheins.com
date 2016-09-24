@@ -1,25 +1,28 @@
 extends layout
 
+include mixins/sources
+
 block header
   meta(name="description", content="Git repository for #{repo.name}.")
-  title= repo.name
+  title Repositories / #{repo.name}
 
 block styles
-  link(rel="stylesheet", href="#{process.env.STATIC_HOST}/css/prism.css")
+  +prismcss
 
 block scripts
-  script(src="#{process.env.STATIC_HOST}/js/prism.js")
+  +prismjs
 
 block content
+  h1 #[a(href="#{process.env.HOST}") REPOSITORIES] / #[a(href="#{repo.webUrl}") #{repo.nameUpper}]
   article
     pre(class="language-none")
-      code git clone #{repo.url}
+      code git clone #{repo.cloneUrl}
     pre(class="language-none")
-      code Latest commit (#{sha.short}) by #{author} on #{date}.
+      code Latest commit (#{lastCommit.sha.short}) by #{lastCommit.author} on #{lastCommit.date}.
     pre(class="language-none")
       code
         ul.bare
-          each entry in entries
+          each entry in repo.entries
             li
               a(href=entry.url)= entry.name
     section

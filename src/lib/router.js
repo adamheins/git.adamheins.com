@@ -12,31 +12,37 @@ let Repository = require('../models/repository');
 
 exports.route = function(app) {
 
-  // Check that requested repo is public.
-  app.param('name', (req, res, next, name) => {
-    Repository.findOne(name, (err, repo) => {
-      if (err) {
-        next(err);
-      } else if (repo) {
-        if (repo.access !== 'PUBLIC') {
-          next(new Error(404));
-        } else {
-          // Construct repository parameters.
-          req.repoName = req.params.name;
-          req.repoDirName = req.repoName + '.git';
-          req.repoPath = path.join(process.env.GIT_DIR, req.repoDirName);
-          req.repoCloneUrl = [process.env.HOST, req.repoDirName].join('/');
+    // Check that requested repo is public.
+    app.param('name', (req, res, next, name) => {
+        Repository.findOne(name, (err, repo) => {
+            if (err) {
+                next(err);
+            } else if (repo) {
+                if (repo.access !== 'PUBLIC') {
+                    next(new Error(404));
+                } else {
+                    let dirName = req.params.name + '.git';
 
-          next();
-        }
-      } else {
-        next(new Error(404));
-      }
+                    // Construct repository parameters.
+                    req.repo = {
+                        name:      req.params.name,
+                        nameUpper: req.params.name.toUpperCase(),
+                        dirName:   dirName,
+                        path:      path.join(process.env.GIT_DIR, dirName),
+                        cloneUrl:  [process.env.HOST, dirName].join('/'),
+                        webUrl:    [process.env.HOST, req.params.name].join('/')
+                    };
+
+                    next();
+                }
+            } else {
+                next(new Error(404));
+            }
+        });
     });
-  });
 
-  app.use('/', index);
-  app.use('/:name', repo);
-  app.use('/:name/files', content);
-  app.use('/:name/raw', raw);
+    app.use('/', index);
+    app.use('/:name', repo);
+    app.use('/:name/files', content);
+    app.use('/:name/raw', raw);
 };

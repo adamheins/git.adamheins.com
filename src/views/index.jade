@@ -1,15 +1,14 @@
 extends layout
 
 block header
-  meta(name="description", content="Adam's git repos.")
-  title Adam Heins
+  meta(name="description", content="Adam Heins' git repositories.")
+  title Repositories
 
 block content
   article
     section
-      h1 Repositories
+      h1 #[a(href="#{process.env.HOST}") REPOSITORIES]
     each repo in repos
       section
-        h2
-          a(href="/#{repo.name}") #{repo.name}
+        div #[strong #[a(href="/#{repo.name}") #{repo.name}]]
         p.description= repo.description

@@ -1,11 +1,11 @@
 extends ../layout
 
+include ../mixins/repo
 include ../mixins/sources
-include ../mixins/git
 
 block header
-  meta(name="description", content="#{name}")
-  title= name
+  meta(name="description", content="#{file.name}")
+  title Repositories / #{repo.name}
 
 block styles
   +prismcss
@@ -14,11 +14,11 @@ block scripts
   +prismjs
 
 block content
-  +gitHeader
+  +repoHeader
   article
     pre(class="language-none")
       code
         ul.bare
-          each entry in entries
+          each entry in file.entries
             li
               a(href=entry.url)= entry.name

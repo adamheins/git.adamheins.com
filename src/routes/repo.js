@@ -16,82 +16,77 @@ let Sha = require('../lib/sha');
 
 
 router.get('/', (req, res, next) => {
-  let commit = git.Repository.open(req.repoPath)
-    .then(repo => {
-      return repo.getHeadCommit();
+    let commit = git.Repository.open(req.repo.path).then(repo => {
+        return repo.getHeadCommit();
     }, err => {
-      // Repo not found, throw a 404 error.
-      let error = new Error('Not found.');
-      error.status = 404;
-      throw error;
+        // Repo not found, throw a 404 error.
+        let error = new Error('Not found.');
+        error.status = 404;
+        throw error;
     });
 
-  commit.then(commit => {
-      return commit.getEntry('README.md');
+    commit.then(commit => {
+        return commit.getEntry('README.md');
     }).then(entry => {
-      return entry.getBlob();
+        return entry.getBlob();
     }).then(blob => {
 
-      let author = '';
-      let date = '';
-      let sha = '';
+        let author = '';
+        let date = '';
+        let sha = '';
 
-      commit.then(commit => {
-        author = commit.author();
-        date = moment(commit.date());
-        sha = new Sha(commit.sha());
+        commit.then(commit => {
+            author = commit.author();
+            date = moment(commit.date());
+            sha = new Sha(commit.sha());
 
-        return commit.getTree();
-      }).then(tree => {
-        let readme = blob.toString();
+            return commit.getTree();
+        }).then(tree => {
+            let readme = blob.toString();
 
-        // Parse the README from markdown into html.
-        try {
-          readme = marked(readme, {
-            renderer: renderer.getRenderer(req.repoName)
-          });
-        } catch(err) {
-          log.info('README parsing error.');
-          log.error(err);
-        }
+            // Parse the README from markdown into html.
+            try {
+                readme = marked(readme, {
+                    renderer: renderer.getRenderer(req.repo.name)
+                });
+            } catch(err) {
+                log.info('README parsing error.');
+                log.error(err);
+            }
 
-        // Generate links to all contents of the repository.
-        let repoContentBaseUrl = [req.originalUrl, 'files', 'master'].join('/');
-        let repoContents = util.mapTreeEntries(tree.entries(),
-                                               repoContentBaseUrl);
+            // Generate links to all contents of the repository at the head of
+            // the master branch.
+            let repoContentBaseUrl = [req.originalUrl, 'files', 'master'].join('/');
 
-        res.render('repo', {
-          entries: repoContents,
-          repo: {
-            name: req.repoName,
-            url: req.repoCloneUrl,
-            readme: readme
-          },
-          author: author.name(),
-          date: date.format('MMM D, YYYY'),
-          sha: sha
-        });
+            let repo = req.repo;
+            repo.readme = readme;
+            repo.entries = util.mapTreeEntries(tree.entries(), repoContentBaseUrl);
 
-      }).done();
-
+            res.render('repo', {
+                repo: repo,
+                lastCommit: {
+                    author: author.name(),
+                    date: date.format('MMM D, YYYY'),
+                    sha: sha
+                }
+            });
+        }).done();
     }, err => {
-      // Assume that errors that aren't 404's indicate that the README is not
-      // present, but we can otherwise go ahead.
-      if (err.status !== 404) {
-        log.info('No README.');
-        log.error(err);
+        // Assume that errors that aren't 404's indicate that the README is not
+        // present, but we can otherwise go ahead.
+        if (err.status !== 404) {
+            log.info('No README.');
+            log.error(err);
 
-        res.render('repo', {
-          repo: {
-            name: req.repoName,
-            url: req.repoCloneUrl,
-            readme: 'No README.'
-          }
-        });
-      } else {
-        next(err);
-      }
+            let repo = req.repo;
+            repo.readme = 'No README.';
 
+            res.render('repo', {
+                repo: repo
+            });
+        } else {
+            next(err);
+        }
     }).done();
 });
 

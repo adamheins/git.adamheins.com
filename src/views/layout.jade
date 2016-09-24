@@ -7,31 +7,12 @@ html
     meta(name="author", content="Adam Heins")
 
     link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic")
-    link(rel="stylesheet", href="#{process.env.STATIC_HOST}/css/layout.css")
+    link(rel="stylesheet", href="#{process.env.STATIC_HOST}/css/bones.css")
 
     block header
     block styles
 
   body
     .container
-      .header
-        .brand
-          h1
-            a.name(href="https://adamheins.com") Adam Heins
-          .flavour Mechatronics Engineering
-        nav
-          a(href="#{process.env.HOST}") Git
-          a(href="#{process.env.ROOT_DOMAIN}/blog") Blog
-          a(href="#{process.env.ROOT_DOMAIN}/projects") Projects
-          a(href="#{process.env.ROOT_DOMAIN}/resume") Résumé
-          a(href="#{process.env.ROOT_DOMAIN}/about") About
-      .content
-        block content
-      .footer
-        .contact
-          a.fa.fa-lg.fa-github(href="https://github.com/adamheins")
-          a.fa.fa-lg.fa-envelope(href="mailto:mail@adamheins.com")
-          a.fa.fa-lg.fa-linkedin(href="http://ca.linkedin.com/in/adamwheins")
-        .credit Adam Heins &copy 2016
-    link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css")
+      block content
     block scripts

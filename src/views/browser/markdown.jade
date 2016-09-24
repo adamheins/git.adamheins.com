@@ -1,11 +1,11 @@
 extends ../layout
 
+include ../mixins/repo
 include ../mixins/sources
-include ../mixins/git
 
 block header
-  meta(name="description", content="#{name}")
-  title= name
+  meta(name="description", content="#{file.name}")
+  title Repositories / #{repo.name}
 
 block styles
   +prismcss
@@ -14,7 +14,7 @@ block scripts
   +prismjs
 
 block content
-  +gitHeader
+  +repoHeader
   article
     section
-      div!= content
+      div!= file.content

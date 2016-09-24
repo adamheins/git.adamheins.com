@@ -1,13 +1,13 @@
 'use strict';
 
-var mongoose = require('mongoose');
+let mongoose = require('mongoose');
 
-var repositorySchema = new mongoose.Schema({
-  name: String,
-  path: String,
-  access: String,
-  description: String,
-  tags: []
+let repositorySchema = new mongoose.Schema({
+    name: String,
+    path: String,
+    access: String,
+    description: String,
+    tags: []
 });
 
 module.exports = mongoose.model('Repository', repositorySchema, 'repositories');
