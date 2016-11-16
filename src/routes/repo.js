@@ -15,6 +15,7 @@ let util = require('../lib/util');
 let Sha = require('../lib/sha');
 
 
+// Convert a blob to a README, attempting to parse as markdown.
 function readmeFromBlob(blob, renderer) {
     let readme = blob.toString();
 
@@ -32,6 +33,7 @@ function readmeFromBlob(blob, renderer) {
 }
 
 
+// Render the repository home page.
 function renderRepo(req, res, tree, readme, lastCommit) {
     // Generate links to all contents of the repository at the head of
     // the master branch.
@@ -50,6 +52,19 @@ function renderRepo(req, res, tree, readme, lastCommit) {
 }
 
 
+// Get information about the commit.
+function getCommitInfo(commit) {
+    let author = commit.author();
+    let date = moment(commit.date());
+    let sha = new Sha(commit.sha());
+    return {
+        author: author.name(),
+        date: date.format('MMM D, YYYY'),
+        sha: sha
+    };
+}
+
+
 router.get('/', (req, res, next) => {
     // Get the head commit of the repository.
     let commit = git.Repository.open(req.repo.path).then(repo => {
@@ -63,14 +78,7 @@ router.get('/', (req, res, next) => {
 
     // Gather information about the last commit.
     let lastCommit = commit.then(commit => {
-        let author = commit.author();
-        let date = moment(commit.date());
-        let sha = new Sha(commit.sha());
-        return {
-            author: author.name(),
-            date: date.format('MMM D, YYYY'),
-            sha: sha
-        };
+        return getCommitInfo(commit);
     });
 
     commit.then(commit => {
