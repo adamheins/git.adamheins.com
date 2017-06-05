@@ -3,16 +3,14 @@
 let express = require('express');
 let router = express.Router();
 
-let Repository = require('../models/repository');
+let repos = require('../lib/repos');
 
 router.get('/', (req, res) => {
-    Repository.find({access: 'PUBLIC'}).sort({name: 1}).exec((err, repos) => {
-        repos = repos.map(repo => {
-            repo.nameUpper = repo.name.toUpperCase();
-            return repo;
-        });
-        res.render('index', {'repos': repos});
+    let repoList = repos.all().map(repo => {
+        repo.nameUpper = repo.name.toUpperCase();
+        return repo;
     });
+    res.render('index', {'repos': repoList});
 });
 
 module.exports = router;

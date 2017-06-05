@@ -3,17 +3,14 @@
 let express = require('express');
 let fs = require('fs');
 let log = require('npmlog');
-let mongoose = require('mongoose');
 let path = require('path');
 
 let error = require('./lib/error');
 let router = require('./lib/router');
+let repos = require('./lib/repos');
 
 
 let app = express();
-
-// Connect to the database.
-mongoose.connect(process.env.MONGO_URI);
 
 // Logging.
 log.level = process.env.LOG_LEVEL;
@@ -24,6 +21,7 @@ log.maxRecordSize = 1000;
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+repos.load('repos.yaml');
 router.route(app);
 error.handle(app);
 

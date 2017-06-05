@@ -13,6 +13,6 @@ if [ -f "$PID_FILE" ]; then
   echo "PID file found, restarting..."
   npm restart
 else
-  nohup nodejs src/server.js >/dev/null 2>&1 &
+  nohup node src/server.js >/dev/null 2>&1 &
   echo $! > "$PID_FILE"
 fi

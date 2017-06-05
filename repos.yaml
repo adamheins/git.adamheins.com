@@ -1,0 +1,19 @@
+repos:
+  -
+    name: notes-code
+    path: notes-code.git
+    access: PUBLIC
+    description: Notes to help remember code.
+    tags: []
+  -
+    name: notes-math
+    path: notes-math.git
+    access: PUBLIC
+    description: Notes to help remember math.
+    tags: []
+  -
+    name: test-repo
+    path: arc.git
+    access: PUBLIC
+    description: A repository for testing git.adamheins.com.
+    tags: []
