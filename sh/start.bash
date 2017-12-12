@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # Change to parent of this script's directory.
-cd "$(dirname "${BASH_SOURCE[0]}")"/..
+GIT_SITE_ROOT=$(dirname "${BASH_SOURCE[0]}")/..
+cd $GIT_SITE_ROOT
 
-PID_FILE=/var/run/git.adamheins.com.pid
+PID_FILE=$GIT_SITE_ROOT/run/git.adamheins.com.pid
 
 # Add environment variables required.
 while read line; do export "$line";
