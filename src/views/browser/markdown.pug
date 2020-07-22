@@ -4,7 +4,7 @@ include ../mixins/repo
 include ../mixins/sources
 
 block header
-  meta(name="description", content="#{file.name}")
+  meta(name="description", content=file.name)
   title Repositories - #{repo.name}
 
 block styles
@@ -16,9 +16,5 @@ block scripts
 block content
   +repoHeader
   article
-    pre(class="language-none")
-      code
-        ul.bare
-          each entry in file.entries
-            li
-              a(href=entry.url)= entry.name
+    section
+      div!= file.content

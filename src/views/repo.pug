@@ -3,7 +3,7 @@ extends layout
 include mixins/sources
 
 block header
-  meta(name="description", content="Git repository for #{repo.name}.")
+  meta(name="description", content="Git repository for " + repo.name + ".")
   title Repositories - #{repo.name}
 
 block styles
@@ -13,7 +13,7 @@ block scripts
   +prismjs
 
 block content
-  h1 #[a(href="#{process.env.HOST}") REPOSITORIES] - #[a(href="#{repo.webUrl}") #{repo.nameUpper}]
+  h1 #[a(href=process.env.HOST) REPOSITORIES] - #[a(href=repo.webUrl) #{repo.nameUpper}]
   article
     pre(class="language-none")
       code git clone #{repo.cloneUrl}

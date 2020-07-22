@@ -19,7 +19,7 @@ log.maxRecordSize = 1000;
 
 // View engine.
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 repos.load('repos.yaml');
 router.route(app);
