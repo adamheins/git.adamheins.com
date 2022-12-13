@@ -16,7 +16,7 @@
     "stop": "./sh/stop.bash"
   },
   "dependencies": {
-    "express": "~4.17.1",
+    "express": "~4.17.3",
     "glob": "^7.0.6",
     "js-yaml": "^3.14.0",
     "marked": "^1.1.1",
